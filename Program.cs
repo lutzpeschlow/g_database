@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Data.SQLite;
+
+
+
 class Program
 {
-    
+
     static void Main(string[] args)
     {
         string connectionString = "Data Source=MyDatabase.db;Version=3;";
@@ -29,10 +32,23 @@ class Program
                     Console.WriteLine($"Id: {reader["Id"]}, Name: {reader["Name"]}");
                 }
             }
+
         }
+
+        // access function of other class
+        ReadFile r = new ReadFile();
+        int result = r.Function_01(5,3);
+        Console.WriteLine($"result: {result}");
+
+
     }
 }
 
-// storage:
-// ---------------------------------------------------------------
-// Console.WriteLine("Hello, World!");
+class ReadFile
+{
+            public int Function_01(int zahl1, int zahl2)
+        {
+            return zahl1 + zahl2;
+        }
+}
+
