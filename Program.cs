@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 class Program
 {
+    
     static void Main(string[] args)
     {
         string connectionString = "Data Source=MyDatabase.db;Version=3;";
