@@ -2,7 +2,6 @@ using System.Data.SQLite;
 
 // ======================================================================================
 
-
 class ServiceDesk
 // Service Desk as class for interface between user and database access
 //
