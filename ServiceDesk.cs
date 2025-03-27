@@ -1,6 +1,7 @@
 using System.Data.SQLite;
 
-// ======================================================================================
+namespace ExampleSqlite
+{
 
 class ServiceDesk
 // Service Desk as class for interface between user and database access
@@ -10,6 +11,23 @@ class ServiceDesk
 // - write data to database
 // - read data to database
 {
+
+    // variable from main to be defined in this class via constructor
+    private string _dbLoc;
+
+    // constructor for class
+    public ServiceDesk(string dbLoc)
+    {
+        _dbLoc = dbLoc;
+    }
+
+
+
+
+
+
+
+
     public static void InfoAccess(bool create=true)
     // InfoAccess
     // common information around database
@@ -176,3 +194,4 @@ class ServiceDesk
     }
 }
 
+}

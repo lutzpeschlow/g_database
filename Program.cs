@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.IO;
 using ExampleSqlite;
 
+
 namespace ExampleSqlite
 {
 
@@ -14,9 +15,14 @@ class Program
     static void Main(string[] args)
     {
         // definition of database location and score file location
-        
+        string dbPath = "/home/lutz/test";
+        string dbFile = "s.db";
+        string dbLoc = string.Concat(dbPath, "/", dbFile);
+        Console.WriteLine(dbLoc);
+        Console.WriteLine();
+
         // first database check
-        ServiceDesk sd = new ServiceDesk();
+        ServiceDesk sd = new ServiceDesk(dbLoc);
         ServiceDesk.InfoAccess(true);
 
         // do we have a new score file: current_score.txt

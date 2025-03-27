@@ -2,6 +2,8 @@
 
 // --------------------------------------------------------------------------------------
 
+namespace ExampleSqlite
+{
 
 public class ReadScoreFile
 // ReadScoreFile rsf = new ReadScoreFile();
@@ -59,5 +61,7 @@ public class ReadScoreFile
     }
 
     
+}
+
 }
 

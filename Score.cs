@@ -1,4 +1,6 @@
 
+namespace ExampleSqlite
+{
 
 public class Score
 {
@@ -18,4 +20,6 @@ public class Score
         return 0;
     }
     
+}
+
 }
