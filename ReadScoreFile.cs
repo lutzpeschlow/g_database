@@ -11,50 +11,51 @@ public class ReadScoreFile
 // rsf.GetScoreFromFile("/home/lutz/c_sharp/example_sqlite/ExampleSqlite/scores/s_01.txt");
 {
 
+    // private variable to be defined in this class via constructor
+    private string _txtLoc;
+
+    // constructor for class, asssin private variable
+    public ReadScoreFile(string txtLoc)
+    {
+        _txtLoc = txtLoc;
+    }
+
 
     public Score GetCurrentScore()
     // GetCurrentScore
-    // if there is a file current_score.txt it is assumed to be a new score, which is read
-    // and data are intended to be stored in the database
+
     {
         // check file existence
-        string current_file = @"/home/lutz/c_sharp/example_sqlite/ExampleSqlite/scores/current_score.txt";
         bool is_file = false;
-        is_file = File.Exists(current_file);
-        Console.WriteLine($"get current score ... {current_file}, {is_file}");
-        Score score = new Score { Tournament = "Dummy", Date = "Dummy", Name = "Dummy"};
+        is_file = File.Exists(_txtLoc);
+        Console.WriteLine($"get current score ... {_txtLoc}  {is_file}");
+        Score score = new Score { TName = "Dummy", TDate = "Dummy", TPlayer = "Dummy"};
         // get content of file
         if (is_file == true)
-
         {
             // pre-definition
-            string[] zeilen = File.ReadAllLines(current_file);
+            string[] zeilen = File.ReadAllLines(_txtLoc);
             int counter = 0;
-            
-            // direct access to header
-            score.Tournament = zeilen[0];
-            score.Date = zeilen[1]       ;
-            // if (DateTime.TryParse(zeilen[1], out var parsedDatum))
-            // {            score.Datum = parsedDatum;                        }
-            // Fallback bei ungültigem Datumsformat
-            // else             {    score.Datum = DateTime.MinValue;            }
-            score.Name = zeilen[2];
-            // go into loop of lines
+            // direct access to header which contains tournament name, date, player name
+            score.TName   = zeilen[0];
+            score.TDate   = zeilen[1];
+            score.TPlayer = zeilen[2];
+            // go into loop of lines for score itself
             foreach (string zeile in zeilen)
             {
                 Console.WriteLine(zeile);
                 counter = counter + 1;
             }
-            Console.WriteLine(score.Tournament);
-            Console.WriteLine(score.Date);
-            Console.WriteLine(score.Name);   
+            Console.WriteLine($"{score.TName}, {score.TDate}, {score.TPlayer}");
+              
         }
+        // no current score file found, will reset the data in score object
         else
         {
             Console.WriteLine("no current score file found ...");
-            score.Tournament = "";
-            score.Date = "";
-            score.Name = "";
+            score.TName = "";
+            score.TDate = "";
+            score.TPlayer = "";
         }
         // return value is object score
         return score;

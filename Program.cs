@@ -5,32 +5,35 @@ using System.Data.SQLite;
 using System.IO;
 using ExampleSqlite;
 
-
 namespace ExampleSqlite
 {
 
-// === MAIN =============================================================================
 class Program
 {
     static void Main(string[] args)
     {
-        // definition of database location and score file location
+        // (0) variables
+        // database location
         string dbPath = "/home/lutz/test";
         string dbFile = "s.db";
         string dbLoc = string.Concat(dbPath, "/", dbFile);
         Console.WriteLine(dbLoc);
-        Console.WriteLine();
+        // score file loction
+        string txtPath = "/home/lutz/test";
+        string txtFile = "current_score.txt";
+        string txtLoc = string.Concat(txtPath, "/", txtFile);
+        Console.WriteLine(txtLoc);        
 
-        // first database check
+        // (1) Database check
         ServiceDesk sd = new ServiceDesk(dbLoc);
-        ServiceDesk.InfoAccess(true);
+        int i_db_info = sd.InfoAccess(true);
 
-        // do we have a new score file: current_score.txt
-        ReadScoreFile rsf = new ReadScoreFile();
-        Score score = rsf.GetCurrentScore();
-        // rsf.GetScoreFromFile("/home/lutz/c_sharp/example_sqlite/ExampleSqlite/scores/current_score.txt");
-        sd.WriteToDatabase(score);
-        sd.ReadFromDatabase();
+        // (2) Current Scorefile check+-
+        // ReadScoreFile rsf = new ReadScoreFile(txtLoc);
+        // Score score = rsf.GetCurrentScore();
+        
+        // sd.WriteToDatabase(score);
+        // sd.ReadFromDatabase();
         
     }
 }

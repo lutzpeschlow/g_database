@@ -4,19 +4,16 @@ namespace ExampleSqlite
 
 public class Score
 {
-    public required string Tournament { get; set; }
-    public required string Date { get; set; }
-    // public DateTime Datum { get; set; }
-    public required string Name { get; set; }
-    // public List<int> ScoreTable { get; set; }
+    public required string TName   { get; set; }
+    public required string TDate   { get; set; }
+    public required string TPlayer { get; set; }
     
     public int get_debug_info()
     {
         Console.WriteLine("debug info of Score ... ");
-        Console.WriteLine(Tournament);
-        Console.WriteLine(Date);
-        Console.WriteLine(Name);
-
+        Console.WriteLine(TName);
+        Console.WriteLine(TDate);
+        Console.WriteLine(TPlayer);
         return 0;
     }
     

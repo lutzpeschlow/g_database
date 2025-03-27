@@ -1,19 +1,25 @@
 using System.Data.SQLite;
 
+
+
 namespace ExampleSqlite
 {
+
+
 
 class ServiceDesk
 // Service Desk as class for interface between user and database access
 //
 // three main requests:
-// - common database information
+// - common database information (InfoAccess)
 // - write data to database
 // - read data to database
 {
 
     // variable from main to be defined in this class via constructor
     private string _dbLoc;
+
+
 
     // constructor for class
     public ServiceDesk(string dbLoc)
@@ -23,35 +29,28 @@ class ServiceDesk
 
 
 
-
-
-
-
-
-    public static void InfoAccess(bool create=true)
+    public int InfoAccess(bool create=true)
     // InfoAccess
     // common information around database
     {
-        const string dbPath = "mydatabase_01.db";
-        
-        // show database info
-        if (File.Exists(dbPath))
+        // show database info if database already exists
+        if (File.Exists(_dbLoc))
         {
             Console.WriteLine("database exists");
-            ShowDatabaseInfo(dbPath);
+            ShowDatabaseInfo(_dbLoc);
         }
         else
         {
             Console.WriteLine("database does not exist");
         }
         // create optional a new database
-        if (create && !File.Exists(dbPath))
+        if (create && !File.Exists(_dbLoc))
         {
             Console.WriteLine("will create new database");
-            CreateDatabase(dbPath);
-            ShowDatabaseInfo(dbPath);
+            CreateDatabase(_dbLoc);
+            ShowDatabaseInfo(_dbLoc);
         }
-
+        return 0;
     }
 
 
@@ -84,41 +83,74 @@ class ServiceDesk
 
 
 
+
+
     private static void CreateDatabase(string path)
     // CreateDatabase
-    // create new database with a dummy table
+    // create new database with a pre-defined schema for later usage
+    //
+    // Tournament:
+    // "id" INTEGER,
+    // "name" TEXT,
+    // "date" TEXT,
+    // "num_holes" INTEGER,
+    // 
+    // Players:
+    // "player_id" INTEGER,
+    // "username" TEXT,
+    // "lastname" TEXT,
+    // "firstname" TEXT,
+    // 
+    // PlayerScore:
+    // "player_id" INTEGER,
+    // "tournament_id" INTEGER,
+    // "hole_id" INTEGER,
+    // "score" INTEGER
+
     {
         Console.WriteLine("create database ...");
         using (var conn = new SQLiteConnection($"Data Source={path};Version=3;"))
         {
+            // open connection
             conn.Open();
-            string createTable = "CREATE TABLE welcome (Id INTEGER PRIMARY KEY, Name TEXT)";
-            var cmdCreate = new SQLiteCommand(createTable,conn);
-            cmdCreate.ExecuteNonQuery();
+            // Table: Tournaments
+            string sql = "CREATE TABLE IF NOT EXISTS Tournaments (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+                           "TName TEXT, TDate TEXT, NumHoles INTEGER, UNIQUE(TName, TDate))";
+            var command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            // Table: Players
+            sql = "CREATE TABLE IF NOT EXISTS Players (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+                  "Username TEXT, Lastname TEXT, Firstname TEXT, Hcp1 REAL, Hcp2 REAL, UNIQUE(Username))";
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            // Table: Scores
+            sql = "CREATE TABLE IF NOT EXISTS Scores (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+                  "PlayerId INTEGER, TournamentId INTEGER, HoleId INTEGER, Score Integer)";
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            // close connection
+            conn.Close();
         }
     }
-        // string connectionString = "Data Source=MyDatabase.db;Version=3;";
-        // using (var connection = new SQLiteConnection(connectionString))
-        // {  connection.Open();
-        //     string createTableQuery = "CREATE TABLE IF NOT EXISTS Users (Id INTEGER PRIMARY KEY, Name TEXT)";
-        //     using (var command = new SQLiteCommand(createTableQuery, connection))
-        //     { command.ExecuteNonQuery(); }
-        //     string insertDataQuery = "INSERT INTO Users (Name) VALUES ('Alice')";
-        //     using (var command = new SQLiteCommand(insertDataQuery, connection))
-        //     { command.ExecuteNonQuery(); }
-        //     string selectDataQuery = "SELECT * FROM Users";
-        //     using (var command = new SQLiteCommand(selectDataQuery, connection))
-        //     using (var reader = command.ExecuteReader())
-        //     {  while (reader.Read())
-        //         {  Console.WriteLine($"Id: {reader["Id"]}, Name: {reader["Name"]}");
+     
+
+
+
+
+
+
+
+
+
+
 
 
 
     public void WriteToDatabase(Score score)
     {
         Console.WriteLine("Write to Database");
-        const string dbPath = "mydatabase_01.db";
-        using (var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+        
+        using (var conn = new SQLiteConnection($"Data Source={_dbLoc};Version=3;"))
         {
             conn.Open();
 
@@ -135,8 +167,8 @@ class ServiceDesk
             string insertT = "INSERT INTO Tournament (Name, Datum) VALUES (@Name, @Datum)";
             using (SQLiteCommand insertCmd = new SQLiteCommand(insertT, conn))
             {
-                insertCmd.Parameters.AddWithValue("@Name", score.Tournament);
-                insertCmd.Parameters.AddWithValue("@Datum", score.Date);
+                insertCmd.Parameters.AddWithValue("@Name", score.TName);
+                insertCmd.Parameters.AddWithValue("@Datum", score.TDate);
                 insertCmd.ExecuteNonQuery();
             }
 
@@ -149,7 +181,7 @@ class ServiceDesk
             string insertP = "INSERT INTO Player (Name) VALUES (@Name)";
             using (SQLiteCommand insertCmd = new SQLiteCommand(insertP, conn))
             {
-                insertCmd.Parameters.AddWithValue("@Name", score.Name);
+                insertCmd.Parameters.AddWithValue("@Name", score.TPlayer);
                 insertCmd.ExecuteNonQuery();
             }            
                     
@@ -161,8 +193,8 @@ class ServiceDesk
     public void ReadFromDatabase()
     {
         Console.WriteLine("Read from Database ...");
-        const string dbPath = "mydatabase_01.db";
-        using (var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+        
+        using (var conn = new SQLiteConnection($"Data Source={_dbLoc};Version=3;"))
         {
             conn.Open();
             string query = "SELECT Name, Datum FROM Tournament";
