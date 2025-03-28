@@ -34,20 +34,27 @@ public class ReadScoreFile
         if (is_file == true)
         {
             // pre-definition
-            string[] zeilen = File.ReadAllLines(_txtLoc);
+            string[] lines = File.ReadAllLines(_txtLoc);
             int counter = 0;
             // direct access to header which contains tournament name, date, player name
-            score.TName   = zeilen[0];
-            score.TDate   = zeilen[1];
-            score.TPlayer = zeilen[2];
+            score.TName   = lines[0].Trim();
+            score.TDate   = lines[1].Trim();
+            score.TPlayer = lines[2].Trim();
             // go into loop of lines for score itself
-            foreach (string zeile in zeilen)
+            foreach (string line in lines)
             {
-                Console.WriteLine(zeile);
                 counter = counter + 1;
-            }
-            Console.WriteLine($"{score.TName}, {score.TDate}, {score.TPlayer}");
-              
+                if (counter >= 4)
+                {
+                string cleaned = line.Trim();
+                string[] values = cleaned.Split(':');
+                if (values.Length == 2 && int.TryParse(values[0], out int first) && int.TryParse(values[1], out int second))
+                    {
+                        score.TScore.Add((first,second));
+                    }
+                }
+
+            }  
         }
         // no current score file found, will reset the data in score object
         else
