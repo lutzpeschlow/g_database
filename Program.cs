@@ -41,7 +41,7 @@ class Program
 
         // (1) Database check
         ServiceDesk sd = new ServiceDesk(dbLoc);
-        int i_db_info = sd.InfoAccess(true);
+        int i_db_info = sd.InfoAccess(true,true);
 
         // (2) Current Scorefile check
         ReadScoreFile rsf = new ReadScoreFile(txtLoc);

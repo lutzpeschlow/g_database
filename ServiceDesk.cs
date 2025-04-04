@@ -29,7 +29,7 @@ class ServiceDesk
 
 
 
-    public int InfoAccess(bool create=true)
+    public int InfoAccess(bool create=true, bool remove=false)
     // InfoAccess
     // common information around database
     {
@@ -43,7 +43,11 @@ class ServiceDesk
         {
             Console.WriteLine("database does not exist");
         }
-        // create optional a new database
+        // create optional a new database, remove old one optional
+        if (remove && File.EXists(_dbLoc))
+        {
+            File.Delete(_dbLoc);
+        }
         if (create && !File.Exists(_dbLoc))
         {
             Console.WriteLine("will create new database");
@@ -88,24 +92,7 @@ class ServiceDesk
     private static void CreateDatabase(string path)
     // CreateDatabase
     // create new database with a pre-defined schema for later usage
-    //
-    // Tournament:
-    // "id" INTEGER,
-    // "name" TEXT,
-    // "date" TEXT,
-    // "num_holes" INTEGER,
-    // 
-    // Players:
-    // "player_id" INTEGER,
-    // "username" TEXT,
-    // "lastname" TEXT,
-    // "firstname" TEXT,
-    // 
-    // PlayerScore:
-    // "player_id" INTEGER,
-    // "tournament_id" INTEGER,
-    // "hole_id" INTEGER,
-    // "score" INTEGER
+    
 
     {
         Console.WriteLine("create database ...");
@@ -113,21 +100,40 @@ class ServiceDesk
         {
             // open connection
             conn.Open();
-            // Table: Tournaments
-            string sql = "CREATE TABLE IF NOT EXISTS Tournaments (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-                           "TName TEXT, TDate TEXT, NumHoles INTEGER, UNIQUE(TName, TDate))";
+
+
+            string sql = "CREATE TABLE IF NOT EXISTS Players ( player_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                          "first_name VARCHAR(100),last_name VARCHAR(100),birth_date DATE,gender CHAR(1),email VARCHAR(255), " + 
+                          "phone VARCHAR(50),registration_date DATE,home_club_id INTEGER,current_hcp_mf DECIMAL(5, 2),current_hcp_dgv DECIMAL(5, 2), " +
+                          "hcp_index DECIMAL(5, 2),status VARCHAR(20) CHECK(status IN ('aktiv', 'inaktiv', 'gesperrt')), " +
+                          "FOREIGN KEY(home_club_id) REFERENCES GolfClubs(club_id))";
             var command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            // Table: Players
-            sql = "CREATE TABLE IF NOT EXISTS Players (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-                  "Username TEXT, Lastname TEXT, Firstname TEXT, Hcp1 REAL, Hcp2 REAL, UNIQUE(Username))";
+            command.ExecuteNonQuery();            
+
+            sql = "CREATE TABLE IF NOT EXISTS GolfCourses (course_id INTEGER PRIMARY KEY AUTOINCREMENT,course_name VARCHAR(100)," +
+                    "loc VARCHAR(255), tot_par INTEGER,tot_length INTEGER,num_holes INTEGER,contact_info VARCHAR(255))";
             command = new SQLiteCommand(sql, conn);
             command.ExecuteNonQuery();
-            // Table: Scores
-            sql = "CREATE TABLE IF NOT EXISTS Scores (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-                  "PlayerId INTEGER, TournamentId INTEGER, HoleId INTEGER, Score Integer)";
-            command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
+
+            // // Table: Tournaments
+            // sql = "CREATE TABLE IF NOT EXISTS Tournaments (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+            //                "TName TEXT, TDate TEXT, NumHoles INTEGER, UNIQUE(TName, TDate))";
+            // command = new SQLiteCommand(sql, conn);
+            // command.ExecuteNonQuery();
+            // // Table: Players
+            // sql = "CREATE TABLE IF NOT EXISTS Players (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+            //       "Username TEXT, Lastname TEXT, Firstname TEXT, Hcp1 REAL, Hcp2 REAL, UNIQUE(Username))";
+            // command = new SQLiteCommand(sql, conn);
+            // command.ExecuteNonQuery();
+            // // Table: Scores
+            // sql = "CREATE TABLE IF NOT EXISTS Scores (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+            //       "PlayerId INTEGER, TournamentId INTEGER, HoleId INTEGER, Score Integer)";
+            // command = new SQLiteCommand(sql, conn);
+            // command.ExecuteNonQuery();
+
+            
+
+
             // close connection
             conn.Close();
         }
