@@ -44,9 +44,9 @@ class Program
         int i_db_info = sd.InfoAccess(true,true);
 
         // (2) Current Scorefile check
-        ReadScoreFile rsf = new ReadScoreFile(txtLoc);
-        Score score = rsf.GetCurrentScore();
-        score.get_debug_info();
+        // ReadScoreFile rsf = new ReadScoreFile(txtLoc);
+        // Score score = rsf.GetCurrentScore();
+        // score.get_debug_info();
         
         // sd.WriteToDatabase(score);
         // sd.ReadFromDatabase();
