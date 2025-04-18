@@ -27,12 +27,13 @@ class Program
             Console.WriteLine("win ...");
             dbPath  = @"c:\tmp";
             txtPath = @"c:\tmp";
+            Directory.CreateDirectory(dbPath);
         }
         else if (isLinux)
         {
             Console.WriteLine("linux ...");
-            dbPath  = "/home/lutz/test";
-            txtPath = "/home/lutz/test";
+            dbPath  = "/tmp";
+            txtPath = "/tmp";
         }
         string dbLoc = string.Concat(dbPath, "/", dbFile);
         Console.WriteLine(dbLoc);
@@ -41,13 +42,15 @@ class Program
 
         // (1) Database check
         ServiceDesk sd = new ServiceDesk(dbLoc);
-        int i_db_info = sd.InfoAccess(true,true);
+        int i_db_info = sd.InfoAccess(true,false);
 
         // (2) Current Scorefile check
         // ReadScoreFile rsf = new ReadScoreFile(txtLoc);
         // Score score = rsf.GetCurrentScore();
         // score.get_debug_info();
         
+        // sd.WriteTest();
+        sd.TextToDatabase();
         // sd.WriteToDatabase(score);
         // sd.ReadFromDatabase();
         

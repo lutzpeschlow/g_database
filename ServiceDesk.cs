@@ -1,3 +1,5 @@
+using System.CodeDom;
+using System.Data;
 using System.Data.SQLite;
 
 
@@ -13,7 +15,7 @@ class ServiceDesk
 // three main requests:
 // - common database information (InfoAccess)
 // - write data to database
-// - read data to database
+// - read data from database
 {
 
     // variable from main to be defined in this class via constructor
@@ -37,7 +39,7 @@ class ServiceDesk
         if (File.Exists(_dbLoc))
         {
             Console.WriteLine("database exists");
-            ShowDatabaseInfo(_dbLoc);
+            // ShowDatabaseInfo(_dbLoc);
         }
         else
         {
@@ -83,6 +85,7 @@ class ServiceDesk
             // database size
             var fileInfo = new FileInfo(path);
             Console.WriteLine($"size of database: {fileInfo.Length} Bytes\n");
+            conn.Close();
         }
     }
 
@@ -103,12 +106,13 @@ class ServiceDesk
             string sql = "CREATE TABLE IF NOT EXISTS Players ( player_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                          "first_name VARCHAR(100), " + 
                          "last_name VARCHAR(100), " + 
-                         "birth_date DATE, " + 
+                         "birth_date VARCHAR(10), " + 
                          "gender CHAR(1), " + 
                          "email VARCHAR(255), " + 
                          "phone VARCHAR(50), " + 
-                         "registration_date DATE, " + 
+                         "registration_date VARCHAR(10), " + 
                          "home_club_id INTEGER, " + 
+                         "current_hcp_lp DECIMAL(5, 2)," +
                          "current_hcp_mf DECIMAL(5, 2), " + 
                          "current_hcp_dgv DECIMAL(5, 2), " +
                          "hcp_index DECIMAL(5, 2), " + 
@@ -140,15 +144,16 @@ class ServiceDesk
             // Table: Tournaments
             sql = "CREATE TABLE IF NOT EXISTS Tournaments (tournament_id INTEGER PRIMARY KEY AUTOINCREMENT, " + 
                   "tournament_name VARCHAR," +
-                  "course_id INTEGER,start_date DATE, " + 
-                  "end_date DATE, " + 
+                  "course_id INTEGER, " +
+                  "start_date VARCHAR(10), " + 
+                  "end_date VARCHAR(10), " + 
                   "format VARCHAR, " + 
                   "max_participants INTEGER, " + 
                   "entry_fee DECIMAL," +
                   "status VARCHAR, " + 
                   "organizer_id INTEGER, " + 
                   "handicap_cutoff DECIMAL," +
-                  " FOREIGN KEY (course_id) REFERENCES GolfCourses(course_id), " + 
+                  "FOREIGN KEY (course_id) REFERENCES GolfCourses(course_id), " + 
                   "FOREIGN KEY (organizer_id) REFERENCES GolfClubs(club_id))";
             command = new SQLiteCommand(sql, conn);
             command.ExecuteNonQuery();                
@@ -156,7 +161,7 @@ class ServiceDesk
             sql = "CREATE TABLE IF NOT EXISTS Participants (participation_id INTEGER PRIMARY KEY AUTOINCREMENT, " + 
                   "tournament_id INTEGER," +
                   "player_id INTEGER, " + 
-                  "registration_date DATE, " + 
+                  "registration_date VARCHAR(10), " + 
                   "handicap_at_time DECIMAL, " + 
                   "payment_status VARCHAR," +
                   "FOREIGN KEY (tournament_id) REFERENCES Tournaments(tournament_id), " + 
@@ -194,7 +199,7 @@ class ServiceDesk
             // Table: HandicapHistory           
             sql = "CREATE TABLE IF NOT EXISTS HandicapHistory (history_id INTEGER PRIMARY KEY AUTOINCREMENT, " + 
                   "player_id INTEGER," +
-                  "effective_date DATE, " + 
+                  "effective_date VARCHAR(10), " + 
                   "handicap_value_mf DECIMAL, " + 
                   "handicap_value_dgv DECIMAL, " + 
                   "calculation_basis VARCHAR, " + 
@@ -218,7 +223,7 @@ class ServiceDesk
                   "tournament_id INTEGER, " + 
                   "round_number INTEGER, " + 
                   "flight_name VARCHAR," +
-                  "start_time DATETIME, " + 
+                  "start_time VARCHAR(10), " + 
                   "tee_id INTEGER, " + 
                   "FOREIGN KEY(tournament_id) REFERENCES Tournaments(tournament_id), " + 
                   "FOREIGN KEY(tee_id) REFERENCES Tees(tee_id))";
@@ -242,24 +247,7 @@ class ServiceDesk
                   "slope_rating INTEGER, " + 
                   "FOREIGN KEY(course_id) REFERENCES GolfCourses(course_id))";
             command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();                
-                             
-            // // Table: Tournaments
-            // sql = "CREATE TABLE IF NOT EXISTS Tournaments (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-            //                "TName TEXT, TDate TEXT, NumHoles INTEGER, UNIQUE(TName, TDate))";
-            // command = new SQLiteCommand(sql, conn);
-            // command.ExecuteNonQuery();
-            // // Table: Players
-            // sql = "CREATE TABLE IF NOT EXISTS Players (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-            //       "Username TEXT, Lastname TEXT, Firstname TEXT, Hcp1 REAL, Hcp2 REAL, UNIQUE(Username))";
-            // command = new SQLiteCommand(sql, conn);
-            // command.ExecuteNonQuery();
-            // // Table: Scores
-            // sql = "CREATE TABLE IF NOT EXISTS Scores (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-            //       "PlayerId INTEGER, TournamentId INTEGER, HoleId INTEGER, Score Integer)";
-            // command = new SQLiteCommand(sql, conn);
-            // command.ExecuteNonQuery();
-
+            command.ExecuteNonQuery();                                            
             // close connection
             conn.Close();
         }
@@ -268,10 +256,85 @@ class ServiceDesk
 
 
 
+    public void TextToDatabase()
+    {
+        int maxId = 0;
+        string filePath = @"C:\tmp\text_to_db.txt";
+        // Variablen für die Tabelle und Spalten
+        string tableName = "";
+        Dictionary<string, string> columnValues = new Dictionary<string, string>();
+        // Textdatei einlesen
+        foreach (string line in File.ReadLines(filePath))
+        {
+            if (line.StartsWith("table:"))
+            {
+                tableName = line.Split(':')[1].Trim();
+            }
+            else if (line.Contains(":"))
+            {
+                var parts = line.Split(':');
+                string columnName = parts[0].Trim();
+                string columnValue = parts[1].Trim();
+                columnValues[columnName] = columnValue;
+            }
+        }
+        string myKey = "";
+        string myValue = ""; 
+        string atmyKey = ""; 
+        Console.WriteLine($"Table:{tableName}");
+        foreach (KeyValuePair<string, string> kvp in columnValues)
+        {
+            Console.WriteLine($"Key:{kvp.Key},Value:{kvp.Value}");
+            myKey = kvp.Key;
+            myValue = kvp.Value;
+        }
+        Console.WriteLine($" {tableName} {myKey} {myValue}");
+        // open sqlite database
+        string zeitString = DateTime.Now.ToString("HH:mm:ss");
+        atmyKey = "@" + myKey;
+        using (var conn = new SQLiteConnection($"Data Source={_dbLoc};Version=3;"))    
+        {
+            conn.Open();
+            // add working value
+            string newAddress = $"new_adress_{zeitString}";
+            // insert value into GolfClubs
+            string sql = "INSERT INTO GolfClubs (address) VALUES (@address);";
+            Console.WriteLine(sql);
+            using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            {
+               cmd.Parameters.AddWithValue("@address", newAddress);
+               cmd.ExecuteNonQuery();
+            }
+            Console.WriteLine($"added: {newAddress}");
+            // add non working value
+            sql = $"INSERT INTO {tableName} ({myKey}) VALUES (@{myKey});";
+            Console.WriteLine(sql);
+            using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            {
+               cmd.Parameters.AddWithValue(atmyKey, myValue);
+               cmd.ExecuteNonQuery();
+            }
+        }
 
-
-
-
+        
+        //     string columns = string.Join(", ", columnValues.Keys);
+        //     string values = string.Join(", ", columnValues.Values);
+        //     string sql = $"INSERT INTO {tableName} ({columns}) VALUES ({string.Join(", ", columnValues.Keys)})";
+        //     Console.WriteLine(columns);
+        //     Console.WriteLine(values);
+        //     Console.WriteLine(sql);
+        //     using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+        //     {
+        //         // Parameter hinzufügen, um SQL-Injection zu vermeiden
+        //         foreach (var kvp in columnValues)
+        //         {
+        //             cmd.Parameters.AddWithValue($"@{kvp.Key}", kvp.Value);
+        //         }
+        //         cmd.ExecuteNonQuery();
+        //     }
+        
+        // Console.WriteLine("data written ...");
+    }
 
 
 
@@ -348,7 +411,7 @@ class ServiceDesk
         }
     }
 
-
+    
 
     public void DebugPrintout()
     // DebugPrintout
@@ -359,3 +422,32 @@ class ServiceDesk
 }
 
 }
+
+
+
+// store:
+
+
+            // get all column entris from table
+            // string sql = "PRAGMA table_info(GolfClubs);";
+            // using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            // {
+            //     using (SQLiteDataReader reader = cmd.ExecuteReader())
+            //     {
+            //         Console.WriteLine("Column Names: ");
+            //         while (reader.Read())
+            //         {
+            //             Console.WriteLine(reader["name"]);
+            //         }
+            //             
+            //         Console.WriteLine();
+            //     }
+            // }
+            // find max primary ID in table GolfClubs
+            // sql = "SELECT ISNULL(MAX(Id), 0) FROM GolfClubs";
+            // using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            // {
+            //     object result = cmd.ExecuteScalar();
+            //     maxId = Convert.ToInt32(result);
+            // }
+            // int newId = maxId + 1;
