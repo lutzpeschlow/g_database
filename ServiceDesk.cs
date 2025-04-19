@@ -256,14 +256,28 @@ class ServiceDesk
 
 
 
+
+
+
+// ======================================================================================
+// ======================================================================================
+
+
+
+
+
+
+
+
     public void TextToDatabase()
     {
-        int maxId = 0;
-        string filePath = @"C:\tmp\text_to_db.txt";
-        // Variablen für die Tabelle und Spalten
+        long MaxPrimId = 0;
+        // string filePath = @"C:\tmp\text_to_db.txt";
+        string filePath = @"/tmp/text_to_db.txt";
+        // varibles
         string tableName = "";
         Dictionary<string, string> columnValues = new Dictionary<string, string>();
-        // Textdatei einlesen
+        // read text file and assign values to dictionary: columnValues
         foreach (string line in File.ReadLines(filePath))
         {
             if (line.StartsWith("table:"))
@@ -278,43 +292,78 @@ class ServiceDesk
                 columnValues[columnName] = columnValue;
             }
         }
-        string myKey = "";
-        string myValue = ""; 
-        string atmyKey = ""; 
-        Console.WriteLine($"Table:{tableName}");
+        // output of content of columnValues
+        Console.WriteLine($" Table:{tableName}");
         foreach (KeyValuePair<string, string> kvp in columnValues)
         {
-            Console.WriteLine($"Key:{kvp.Key},Value:{kvp.Value}");
-            myKey = kvp.Key;
-            myValue = kvp.Value;
+            Console.WriteLine($"    Key:{kvp.Key},    Value:{kvp.Value}");
+            string myKey = kvp.Key;
         }
-        Console.WriteLine($" {tableName} {myKey} {myValue}");
         // open sqlite database
         string zeitString = DateTime.Now.ToString("HH:mm:ss");
-        atmyKey = "@" + myKey;
+        // string atmyKey = "@" + myKey;
         using (var conn = new SQLiteConnection($"Data Source={_dbLoc};Version=3;"))    
         {
             conn.Open();
-            // add working value
-            string newAddress = $"new_adress_{zeitString}";
-            // insert value into GolfClubs
-            string sql = "INSERT INTO GolfClubs (address) VALUES (@address);";
-            Console.WriteLine(sql);
+
+
+            string sql = $"PRAGMA table_info({tableName});";
+
             using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
             {
-               cmd.Parameters.AddWithValue("@address", newAddress);
-               cmd.ExecuteNonQuery();
+                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.GetInt32(5) == 1)
+                        {
+                            string search_name = reader.GetString(1);
+                            Console.WriteLine(search_name);
+                        }
+                    
+                        
+                        
+                    }
+                }
             }
-            Console.WriteLine($"added: {newAddress}");
-            // add non working value
-            sql = $"INSERT INTO {tableName} ({myKey}) VALUES (@{myKey});";
-            Console.WriteLine(sql);
-            using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            
+            
+            using (SQLiteCommand cmd = new SQLiteCommand("SELECT MAX(club_id) FROM GolfClubs", conn))
             {
-               cmd.Parameters.AddWithValue(atmyKey, myValue);
-               cmd.ExecuteNonQuery();
+                var res_object = cmd.ExecuteScalar();
+                MaxPrimId = Convert.ToInt64(res_object);
+                Console.WriteLine(MaxPrimId);
             }
+            
+            
         }
+
+            // using (SQLiteCommand cmd = new SQLiteCommand("SELECT last_insert_rowid()", conn))
+            // {
+            //     var res_object = cmd.ExecuteScalar();
+            //    MaxPrimId = Convert.ToInt64(res_object);
+            //     Console.WriteLine(MaxPrimId);
+            // }
+
+            // // add working value
+            // string newAddress = $"new_adress_{zeitString}";
+            // // insert value into GolfClubs
+            // string sql = "INSERT INTO GolfClubs (address) VALUES (@address);";
+            // Console.WriteLine(sql);
+            // using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            // {
+            //    cmd.Parameters.AddWithValue("@address", newAddress);
+            //    cmd.ExecuteNonQuery();
+            // }
+            // Console.WriteLine($"added: {newAddress}");
+            // // add non working value
+            // sql = $"INSERT INTO {tableName} ({myKey}) VALUES (@{myKey});";
+            // Console.WriteLine(sql);
+            // using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            // {
+            //    cmd.Parameters.AddWithValue(atmyKey, myValue);
+            //    cmd.ExecuteNonQuery();
+            // }
 
         
         //     string columns = string.Join(", ", columnValues.Keys);

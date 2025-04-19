@@ -1215,19 +1215,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\lutz.peschlow\\.nuget\\packages\\": {}
+    "/home/lutz/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\tmp\\work\\txt\\languages\\c_sharp\\current_programming_folder\\g_database\\ExampleSqlite.csproj",
+      "projectUniqueName": "/home/lutz/c_sharp/current_coding/g_database/ExampleSqlite.csproj",
       "projectName": "ExampleSqlite",
-      "projectPath": "C:\\tmp\\work\\txt\\languages\\c_sharp\\current_programming_folder\\g_database\\ExampleSqlite.csproj",
-      "packagesPath": "C:\\Users\\lutz.peschlow\\.nuget\\packages\\",
-      "outputPath": "C:\\tmp\\work\\txt\\languages\\c_sharp\\current_programming_folder\\g_database\\obj\\",
+      "projectPath": "/home/lutz/c_sharp/current_coding/g_database/ExampleSqlite.csproj",
+      "packagesPath": "/home/lutz/.nuget/packages/",
+      "outputPath": "/home/lutz/c_sharp/current_coding/g_database/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\lutz.peschlow\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/lutz/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -1245,11 +1245,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -1277,7 +1272,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
