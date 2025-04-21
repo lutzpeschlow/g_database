@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "TRnLZJmkwhtL54EuWSh5BR+rDXssXwxnZfc/RBdedZmi7G6mdqxIYotIN2UR2vlRZyOp7aBnr0Lty+Qfa5moig==",
+  "dgSpecHash": "RdkYvNWK0wM9h0yZ/M5edti36qt8EWRvITvR+oVdmidqBGs4sc8kzIMjbBIoxtK0JYs8JKm6BF5N/GeJK9nnDQ==",
   "success": true,
   "projectFilePath": "/home/lutz/c_sharp/current_coding/g_database/ExampleSqlite.csproj",
   "expectedPackageFiles": [

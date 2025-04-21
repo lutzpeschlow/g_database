@@ -271,12 +271,14 @@ class ServiceDesk
 
     public void TextToDatabase()
     {
+        // (0)
+        // variables
         long MaxPrimId = 0;
         // string filePath = @"C:\tmp\text_to_db.txt";
         string filePath = @"/tmp/text_to_db.txt";
-        // varibles
         string tableName = "";
         Dictionary<string, string> columnValues = new Dictionary<string, string>();
+        // (1)
         // read text file and assign values to dictionary: columnValues
         foreach (string line in File.ReadLines(filePath))
         {
@@ -299,17 +301,17 @@ class ServiceDesk
             Console.WriteLine($"    Key:{kvp.Key},    Value:{kvp.Value}");
             string myKey = kvp.Key;
         }
+        // (2)
         // open sqlite database
         string zeitString = DateTime.Now.ToString("HH:mm:ss");
         // string atmyKey = "@" + myKey;
         using (var conn = new SQLiteConnection($"Data Source={_dbLoc};Version=3;"))    
         {
+            // open database connection
             conn.Open();
-
-
-            string sql = $"PRAGMA table_info({tableName});";
-
-            using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            // find out primary key in current table
+            // key 5 is set to 1 for primary key, key 1 is name, key 2 is datatype ...
+            using (SQLiteCommand cmd = new SQLiteCommand($"PRAGMA table_info({tableName});", conn))
             {
                 using (SQLiteDataReader reader = cmd.ExecuteReader())
                 {
@@ -320,23 +322,94 @@ class ServiceDesk
                             string search_name = reader.GetString(1);
                             Console.WriteLine(search_name);
                         }
-                    
-                        
-                        
                     }
                 }
             }
-            
-            
+            // find out number of entries in table and define max id
             using (SQLiteCommand cmd = new SQLiteCommand("SELECT MAX(club_id) FROM GolfClubs", conn))
             {
                 var res_object = cmd.ExecuteScalar();
-                MaxPrimId = Convert.ToInt64(res_object);
+                MaxPrimId = (res_object is null || res_object == DBNull.Value) ? 0 : Convert.ToInt64(res_object);
                 Console.WriteLine(MaxPrimId);
             }
-            
-            
+            // loop over all entries in dictionary and write into new table entry
+            long last_row_id = -1;
+            foreach (KeyValuePair<string, string> kvp in columnValues)
+            {
+                Console.WriteLine($"    {kvp.Key}-{kvp.Value}");
+                string myKey = kvp.Key;
+                // first pass: INSERT + ID abrufen
+                if (last_row_id < 0)
+                {
+                    using (SQLiteCommand cmd = new SQLiteCommand($"INSERT INTO {tableName} ({kvp.Key}) VALUES (@value); " +
+                                                                  "SELECT last_insert_rowid();",conn))
+                    {
+                        cmd.Parameters.AddWithValue("@value", kvp.Value);
+                        last_row_id = Convert.ToInt64(cmd.ExecuteScalar()); // Direkte Zuweisung
+                        Console.WriteLine($"Neue ID: {last_row_id}");
+                    }
+                }
+                // follow-up runs: UPDATE same row
+                else
+                {
+                    using (SQLiteCommand updateCmd = new SQLiteCommand($"UPDATE {tableName} SET {kvp.Key} = @value " + 
+                                                                       "WHERE rowid = @id", conn))
+                    {
+                        updateCmd.Parameters.AddWithValue("@value", kvp.Value);
+                        updateCmd.Parameters.AddWithValue("@id", last_row_id);
+                        updateCmd.ExecuteNonQuery();
+                        Console.WriteLine($"Updated {kvp.Key} in row {last_row_id}");
+                    }
+                }
+            }
         }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //long last_row_id = -1;
+            //foreach (KeyValuePair<string, string> kvp in columnValues)
+            //{
+            //    Console.WriteLine($"    {kvp.Key}-{kvp.Value}");
+            //    string myKey = kvp.Key;
+//
+            //    // first write data case
+            //    if (last_row_id < 0)
+            //    {
+            //        using (SQLiteCommand cmd = new SQLiteCommand($"INSERT INTO {tableName} (address) VALUES (@address);", conn))
+            //        {
+            //            cmd.Parameters.AddWithValue("@address", "new adress string");
+            //            cmd.ExecuteNonQuery();
+            //        }
+            //        // 2. Neue ID abfragen
+            //        using (var idCmd = new SQLiteCommand("SELECT last_insert_rowid()", conn))
+            //        {
+            //            last_row_id = Convert.ToInt64(idCmd.ExecuteScalar());
+            //            Console.WriteLine($"Neue ID: {last_row_id}");
+            //        }
+            //    }
+            //    else
+            //    {
+//
+            //    }
+//
+            //}
+            
+            
+            
+        
 
             // using (SQLiteCommand cmd = new SQLiteCommand("SELECT last_insert_rowid()", conn))
             // {
@@ -383,7 +456,7 @@ class ServiceDesk
         //     }
         
         // Console.WriteLine("data written ...");
-    }
+    
 
 
 
