@@ -26,7 +26,7 @@ class Program
         {
             // (1) database check
             case "SHOW":
-                ServiceDesk sd = new ServiceDesk(dbLoc);
+                Enrollment sd = new Enrollment(dbLoc);
                 int i_db_info = sd.InfoAccess(true,false);
                 break;
             // (2) read any data from database
@@ -41,7 +41,7 @@ class Program
             case "WRITE":
                 Console.WriteLine("WRITE");
                 // sd.WriteTest();
-                ServiceDesk s = new ServiceDesk(txtLoc);
+                Processing s = new Processing(txtLoc);
                 s.TextToDatabase();
                 // sd.WriteToDatabase(score);
                 // sd.ReadFromDatabase();

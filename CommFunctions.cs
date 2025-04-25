@@ -6,6 +6,8 @@ namespace ExampleSqlite
 public class CommFunctions
 {
 
+    private int _first_round=0;
+
 
     // set file locations
     public (string dbLoc, string txtLoc, string argLoc) FileLocations()
@@ -18,18 +20,24 @@ public class CommFunctions
         const string argFile = "input_arguments.txt";
         if (isWindows)
         {
-            Console.WriteLine("windows ...");
+            // Console.WriteLine("windows ......");
             dbPath = txtPath = argPath = @"c:\tmp";
             Directory.CreateDirectory(dbPath);
         }
         else if (isLinux)
         {
-            Console.WriteLine("linux ...");
+            // Console.WriteLine("linux ...");
             dbPath = txtPath = argPath = "/tmp";
         }
         else
         {
             throw new NotSupportedException("non supported operating system ...");
+        }
+        // output operating system info in first time usage
+        if (_first_round == 0)
+        {
+           Console.WriteLine($"win / linux: {isWindows} / {isLinux}"); 
+           _first_round = 1;
         }
         // tuple as return value, three items in tuple
         return ( Path.Combine(dbPath, dbFile),Path.Combine(txtPath, txtFile),Path.Combine(argPath, argFile) );
