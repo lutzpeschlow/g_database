@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = ExampleSqlite
-build_property.ProjectDir = /home/lutz/c_sharp/current_coding/g_database/
+build_property.ProjectDir = C:\tmp\work\txt\languages\c_sharp\current_programming\g_database\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

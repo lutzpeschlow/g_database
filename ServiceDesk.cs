@@ -39,7 +39,7 @@ class ServiceDesk
         if (File.Exists(_dbLoc))
         {
             Console.WriteLine("database exists");
-            // ShowDatabaseInfo(_dbLoc);
+            ShowDatabaseInfo(_dbLoc);
         }
         else
         {
@@ -68,7 +68,7 @@ class ServiceDesk
     // - list of existing tables
     // - size of database
     {
-        Console.WriteLine("show database ...");
+        Console.WriteLine("\nshow database ...");
         using (var conn = new SQLiteConnection($"Data Source={path};Version=3;"))
         {
             conn.Open();
@@ -162,7 +162,9 @@ class ServiceDesk
                   "tournament_id INTEGER," +
                   "player_id INTEGER, " + 
                   "registration_date VARCHAR(10), " + 
-                  "handicap_at_time DECIMAL, " + 
+                  "handicap_at_time_lp DECIMAL, " + 
+                  "handicap_at_time_mf DECIMAL, " + 
+                  "handicap_at_time_dgv DECIMAL, " + 
                   "payment_status VARCHAR," +
                   "FOREIGN KEY (tournament_id) REFERENCES Tournaments(tournament_id), " + 
                   "FOREIGN KEY (player_id) REFERENCES Players(player_id))";
@@ -200,6 +202,7 @@ class ServiceDesk
             sql = "CREATE TABLE IF NOT EXISTS HandicapHistory (history_id INTEGER PRIMARY KEY AUTOINCREMENT, " + 
                   "player_id INTEGER," +
                   "effective_date VARCHAR(10), " + 
+                  "handicap_value_lp DECIMAL, " +
                   "handicap_value_mf DECIMAL, " + 
                   "handicap_value_dgv DECIMAL, " + 
                   "calculation_basis VARCHAR, " + 

@@ -12,48 +12,45 @@ namespace ExampleSqlite
 
 class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        // (0) variables
-        bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-        bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-        // hardcoded database and score file location
-        string dbPath = @"";
-        string dbFile = "s.db";
-        string txtPath = @"";
-        string txtFile = "current_score.txt";
-        if (isWindows)
-        {
-            Console.WriteLine("win ...");
-            dbPath  = @"c:\tmp";
-            txtPath = @"c:\tmp";
-            Directory.CreateDirectory(dbPath);
-        }
-        else if (isLinux)
-        {
-            Console.WriteLine("linux ...");
-            dbPath  = "/tmp";
-            txtPath = "/tmp";
-        }
-        string dbLoc = string.Concat(dbPath, "/", dbFile);
-        Console.WriteLine(dbLoc);
-        string txtLoc = string.Concat(txtPath, "/", txtFile);
-        Console.WriteLine(txtLoc);        
+        // (0) set file locations, read arguments
+        CommFunctions cf = new CommFunctions();
+        var file_locations = cf.FileLocations();
+        string dbLoc = file_locations.Item1;
+        string txtLoc = file_locations.Item2;
+        string input_arg = cf.ReadInputArguments(); 
 
-        // (1) Database check
-        ServiceDesk sd = new ServiceDesk(dbLoc);
-        int i_db_info = sd.InfoAccess(true,false);
-
-        // (2) Current Scorefile check
-        // ReadScoreFile rsf = new ReadScoreFile(txtLoc);
-        // Score score = rsf.GetCurrentScore();
-        // score.get_debug_info();
-        
-        // sd.WriteTest();
-        sd.TextToDatabase();
-        // sd.WriteToDatabase(score);
-        // sd.ReadFromDatabase();
-        
+        // depending on argument value, show, read, write, call the according function
+        switch(input_arg.ToUpper())  
+        {
+            // (1) database check
+            case "SHOW":
+                ServiceDesk sd = new ServiceDesk(dbLoc);
+                int i_db_info = sd.InfoAccess(true,false);
+                break;
+            // (2) read any data from database
+            case "READ":
+                Console.WriteLine("READ");
+                // (2) Current Scorefile check
+                // ReadScoreFile rsf = new ReadScoreFile(txtLoc);
+                // Score score = rsf.GetCurrentScore();
+                // score.get_debug_info();
+                break; 
+            // (3) write to database from textfile
+            case "WRITE":
+                Console.WriteLine("WRITE");
+                // sd.WriteTest();
+                ServiceDesk s = new ServiceDesk(txtLoc);
+                s.TextToDatabase();
+                // sd.WriteToDatabase(score);
+                // sd.ReadFromDatabase();
+                // Hier write-Logik implementieren
+                break;
+            default:  
+                Console.WriteLine("default case");
+                break;
+        }
     }
 }
 
