@@ -18,25 +18,62 @@ class Processing
 
     // variable from main to be defined in this class via constructor
     private string _dbLoc;
+    private string _path;
 
 
 
     // constructor for class
-    public Processing(string dbLoc)
+    public Processing(string dbLoc, string path)
     {
         _dbLoc = dbLoc;
+        _path = path;
     }
 
 
+    // get files matching to criteria
+    private List<string> GetMatchingFiles(string directoryPath)
+        {
+            Console.WriteLine("try to read files in directory ...");
+            List<string> matchingFiles = new List<string>();
+            try
+            {
+                string[] files = Directory.GetFiles(directoryPath, "text_to_db_*.txt");
+                matchingFiles.AddRange(files);
+                Console.WriteLine("in try ..." + files.Length);
+                foreach (string str in files)
+                {
+                    Console.WriteLine(str);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error reading directory: {ex.Message}");
+            }
+        return matchingFiles;
+        }
 
 
-    public void TextToDatabase()
+    // parent function calling txt to database for each file found in directory
+    public void FilesToDatabase()
+    {
+        List<string> matchingFiles = GetMatchingFiles(_path);
+
+        foreach (string filePath in matchingFiles)
+        {
+            Console.WriteLine(filePath);
+            TextToDatabase(filePath);
+        }
+    }
+
+
+    public void TextToDatabase(string filePath)
     {
         // (0)
         // variables
         long MaxPrimId = 0;
         // string filePath = @"C:\tmp\text_to_db.txt";
-        string filePath = @"/tmp/text_to_db.txt";
+        // string filePath = @"/tmp/text_to_db.txt";
         string tableName = "";
         Dictionary<string, string> columnValues = new Dictionary<string, string>();
         // (1)

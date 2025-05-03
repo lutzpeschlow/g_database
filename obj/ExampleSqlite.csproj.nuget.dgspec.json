@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\tmp\\work\\txt\\languages\\c_sharp\\current_programming\\g_database\\ExampleSqlite.csproj": {}
+    "/home/lutz/c_sharp/current_coding/g_database/ExampleSqlite.csproj": {}
   },
   "projects": {
-    "C:\\tmp\\work\\txt\\languages\\c_sharp\\current_programming\\g_database\\ExampleSqlite.csproj": {
+    "/home/lutz/c_sharp/current_coding/g_database/ExampleSqlite.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\tmp\\work\\txt\\languages\\c_sharp\\current_programming\\g_database\\ExampleSqlite.csproj",
+        "projectUniqueName": "/home/lutz/c_sharp/current_coding/g_database/ExampleSqlite.csproj",
         "projectName": "ExampleSqlite",
-        "projectPath": "C:\\tmp\\work\\txt\\languages\\c_sharp\\current_programming\\g_database\\ExampleSqlite.csproj",
-        "packagesPath": "C:\\Users\\lutz.peschlow\\.nuget\\packages\\",
-        "outputPath": "C:\\tmp\\work\\txt\\languages\\c_sharp\\current_programming\\g_database\\obj\\",
+        "projectPath": "/home/lutz/c_sharp/current_coding/g_database/ExampleSqlite.csproj",
+        "packagesPath": "/home/lutz/.nuget/packages/",
+        "outputPath": "/home/lutz/c_sharp/current_coding/g_database/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\lutz.peschlow\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/lutz/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,11 +32,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -64,7 +59,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.408/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.115/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

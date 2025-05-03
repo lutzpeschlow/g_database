@@ -10,7 +10,7 @@ public class CommFunctions
 
 
     // set file locations
-    public (string dbLoc, string txtLoc, string argLoc) FileLocations()
+    public (string dbLoc, string txtLoc, string argLoc, string path) FileLocations()
     {
         bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
@@ -40,7 +40,7 @@ public class CommFunctions
            _first_round = 1;
         }
         // tuple as return value, three items in tuple
-        return ( Path.Combine(dbPath, dbFile),Path.Combine(txtPath, txtFile),Path.Combine(argPath, argFile) );
+        return ( Path.Combine(dbPath, dbFile),Path.Combine(txtPath, txtFile),Path.Combine(argPath, argFile), dbPath);
     }
 
 
@@ -48,8 +48,8 @@ public class CommFunctions
     // read arguments from file
     public string ReadInputArguments()
     {
-        var (_, _, argLoc) = FileLocations();
-        string[] validOptions = { "SHOW", "READ", "WRITE" };
+        var (_, _, argLoc,_) = FileLocations();
+        string[] validOptions = { "SHOW", "READ", "WRITE", "SCORE" };
         // set default value
         if (!File.Exists(argLoc)) 
             return "SHOW"; 
