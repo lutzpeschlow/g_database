@@ -1,0 +1,16 @@
+table:Players
+first_name:Lutz
+last_name:Peschlow
+birth_date:09.05.1971
+gender:m
+email:lutz.peschlow@gmail.com
+phone:0172 8333978
+registration_date:21.04.2025
+home_club_id:1
+current_hcp_lp:54.0
+current_hcp_mf:54.0
+current_hcp_dgv:54:0
+hcp_index:54.0
+status:aktiv
+
+

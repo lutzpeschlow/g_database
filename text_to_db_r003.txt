@@ -1,0 +1,9 @@
+table:GolfCourses
+course_name:
+loc:
+tot_par:
+tot_length:
+num_holes:
+contact_info:
+
+

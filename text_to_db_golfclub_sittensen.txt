@@ -1,0 +1,9 @@
+table:GolfClubs
+club_name:Golfclub Königshof Sittensen
+address:Alpershausener Weg 60  27419 Sittensen
+phone: 04282 3266
+email: info@golfclub-sittensen.de
+website: www.golfclub-sittensen.de
+
+
+
