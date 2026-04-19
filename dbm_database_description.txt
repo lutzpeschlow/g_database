@@ -1,0 +1,166 @@
+
+Table Players {
+  player_id INTEGER [primary key, increment]
+  first_name VARCHAR(100)
+  last_name VARCHAR(100)
+  birth_date VARCHAR(10)
+  gender CHAR(1)
+  email VARCHAR(255)
+  phone VARCHAR(50)
+  registration_date VARCHAR(10)
+  home_club_id INTEGER
+  current_hcp_lp DECIMAL(5, 2)
+  current_hcp_mf DECIMAL(5, 2)
+  current_hcp_dgv DECIMAL(5, 2)
+  hcp_index DECIMAL(5, 2)
+  status VARCHAR(20)
+  Indexes {
+    home_club_id [name: 'idx_players_home_club']
+  }
+}
+
+Table GolfClubs {
+  club_id INTEGER [primary key, increment]
+  club_name VARCHAR
+  address VARCHAR
+  contact_person VARCHAR
+  phone VARCHAR
+  email VARCHAR
+  website VARCHAR
+}
+
+Table GolfCourses {
+  course_id INTEGER [primary key, increment]
+  course_name VARCHAR(100)
+  loc VARCHAR(255)
+  tot_par INTEGER
+  tot_length INTEGER
+  num_holes INTEGER
+  contact_info VARCHAR(255)
+}
+
+Table Holes {
+  hole_id INTEGER [primary key, increment]
+  course_id INTEGER
+  hole_number INTEGER
+  par INTEGER
+  handicap INTEGER
+  length INTEGER
+  description TEXT
+  Indexes {
+    course_id [name: 'idx_holes_course']
+  }
+}
+
+Table Tees {
+  tee_id INTEGER [primary key, increment]
+  course_id INTEGER
+  tee_name VARCHAR
+  total_length INTEGER
+  course_rating DECIMAL
+  slope_rating INTEGER
+  Indexes {
+    course_id [name: 'idx_tees_course']
+  }
+}
+
+Table Tournaments {
+  tournament_id INTEGER [primary key, increment]
+  tournament_name VARCHAR
+  course_id INTEGER
+  start_date VARCHAR(10)
+  end_date VARCHAR(10)
+  format VARCHAR
+  max_participants INTEGER
+  entry_fee DECIMAL
+  status VARCHAR
+  organizer_id INTEGER
+  handicap_cutoff DECIMAL
+  Indexes {
+    course_id [name: 'idx_tournaments_course']
+    organizer_id [name: 'idx_tournaments_organizer']
+  }
+}
+
+Table Participants {
+  participation_id INTEGER [primary key, increment]
+  tournament_id INTEGER
+  player_id INTEGER
+  registration_date VARCHAR(10)
+  handicap_at_time DECIMAL
+  payment_status VARCHAR
+  Indexes {
+    tournament_id [name: 'idx_participants_tournament']
+    player_id [name: 'idx_participants_player']
+  }
+}
+
+Table Results {
+  result_id INTEGER [primary key, increment]
+  participation_id INTEGER
+  round_number INTEGER
+  total_score INTEGER
+  net_score INTEGER
+  stableford_points INTEGER
+  birdies INTEGER
+  pars INTEGER
+  bogeys INTEGER
+  double_bogeys_or_worse INTEGER
+  status VARCHAR
+  Indexes {
+    participation_id [name: 'idx_results_participation']
+  }
+}
+
+Table HoleResults {
+  holeresult_id INTEGER [primary key, increment]
+  result_id INTEGER
+  hole_id INTEGER
+  strokes INTEGER
+  putts INTEGER
+  fairway_hit BOOLEAN
+  greens_in_regulation BOOLEAN
+  penalties INTEGER
+  Indexes {
+    result_id [name: 'idx_holeresults_result']
+    hole_id [name: 'idx_holeresults_hole']
+  }
+}
+
+Table HandicapHistory {
+  history_id INTEGER [primary key, increment]
+  player_id INTEGER
+  effective_date VARCHAR(10)
+  handicap_value_mf DECIMAL
+  handicap_value_dgv DECIMAL
+  calculation_basis VARCHAR
+  related_tournament_id INTEGER [null]
+  Indexes {
+    player_id [name: 'idx_handicaphistory_player']
+    related_tournament_id [name: 'idx_handicaphistory_tournament']
+  }
+}
+
+Table Flights {
+  flight_id INTEGER [primary key, increment]
+  tournament_id INTEGER
+  round_number INTEGER
+  flight_name VARCHAR
+  start_time VARCHAR(10)
+  tee_id INTEGER
+  Indexes {
+    tournament_id [name: 'idx_flights_tournament']
+    tee_id [name: 'idx_flights_tee']
+  }
+}
+
+Table FlightAssignments {
+  assignment_id INTEGER [primary key, increment]
+  flight_id INTEGER
+  participation_id INTEGER
+  starting_order INTEGER
+  Indexes {
+    flight_id [name: 'idx_flightassignments_flight']
+    participation_id [name: 'idx_flightassignments_participation']
+  }
+}
